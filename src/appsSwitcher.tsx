@@ -4,14 +4,19 @@ import { exec } from "child_process";
 import { useState } from "react";
 import { getRunningAppInfos } from "swift:../swift";
 
+interface AppInfo {
+  name: string;
+  icon: string;
+}
+
 export default function Command() {
-  const [filteredApplications, setFilteredApplications] = useState<string[]>([]);
+  const [filteredApplications, setFilteredApplications] = useState<AppInfo[]>([]);
   const {
     isLoading,
     data: runningApps,
     error,
   } = usePromise(async () => {
-    const apps = await getRunningAppInfos();
+    const apps = (await getRunningAppInfos()) as AppInfo[];
     setFilteredApplications(apps);
     return apps;
   });
@@ -32,9 +37,9 @@ export default function Command() {
 
   const handleSearch = (query: string) => {
     setSearchText(query);
-    const filtered = runningApps?.filter((app) => app.toLowerCase().includes(query.toLowerCase()));
+    const filtered = runningApps?.filter((app) => app.name.toLowerCase().includes(query.toLowerCase()));
     if (filtered?.length === 1) {
-      focusApplication(filtered[0]);
+      focusApplication(filtered[0].name);
     }
 
     setFilteredApplications(filtered || []);
@@ -45,10 +50,11 @@ export default function Command() {
       {filteredApplications?.map((app, index) => (
         <List.Item
           key={index}
-          title={app}
+          title={app.name}
+          icon={{ source: app.icon }}
           actions={
             <ActionPanel>
-              <Action title="Focus Application" onAction={() => focusApplication(app)} />
+              <Action title="Focus Application" onAction={() => focusApplication(app.name)} />
             </ActionPanel>
           }
         />
