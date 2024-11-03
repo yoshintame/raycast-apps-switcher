@@ -10,8 +10,8 @@
   "commands": [
     {
       "name": "appsSwitcher",
-      "title": "Apps Switcher",
-      "description": "Get running apps list",
+      "title": "Switch Apps",
+      "description": "Quickly switch between running applications",
       "mode": "view"
     }
   ],
